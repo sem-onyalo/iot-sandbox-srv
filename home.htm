@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>IoT Sandbox</title>
+</head>
+
+<body>
+    <h1 id="msg">Hello, world!</h1>
+</body>
+
+<script type="text/javascript">
+    window.onload = function () {
+        var conn;
+        var msg = document.getElementById("msg");
+
+        if (window["WebSocket"]) {
+            conn = new WebSocket("ws://" + document.location.host + "/ws?type=listener");
+            conn.onclose = function (evt) {
+                var item = document.createElement("div");
+                item.innerHTML = "<b>Connection closed.</b>";
+                msg.parentElement.insertBefore(item, msg.nextSibling);
+            };
+            conn.onmessage = function (e) {
+                var data = JSON.parse(e.data);
+                msg.innerHTML = '(' + data.axisx + ', ' + data.axisy + ', ' + data.axisz + ')';
+            };
+        } else {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+            msg.parentElement.insertBefore(item, msg.nextSibling);
+        }
+    };
+</script>
+
+</html>
